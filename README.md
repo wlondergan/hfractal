@@ -2,7 +2,7 @@
 This is a pet project of mine created for the purpose of rendering fractals. Currently only the Mandelbrot set is supported, but I have plans to add
 Julia sets and more in the future.
 
-![The Mandelbrot set, centered at (-.75, .1) with width and height 0.1](https://github.com/[wlondergan]/hfractal/master/sample-render.png?raw=true)
+![The Mandelbrot set, centered at (-.75, .1) with width and height 0.1](https://github.com/wlondergan/hfractal/master/sample-render.png)
 
 ## Progress
 Currently, this program only renders the Mandelbrot set in greyscale without any sophisticated math to reduce oversampling requirements. I have plans
