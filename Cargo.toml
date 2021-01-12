@@ -1,0 +1,17 @@
+[package]
+name = "hmand"
+version = "0.1.0"
+authors = ["Hughes <hugslondergan@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rug = "1.11.0"
+image = "0.23.12"
+
+[profile.dev]
+opt-level = 2
+
+[profile.release]
+opt-level = 4
