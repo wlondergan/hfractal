@@ -2,10 +2,10 @@ use hmand::math::window::WindowProperties;
 use hmand::image::{FractalType, draw_image, draw_image_parallel};
 use rug::{Complex, Float};
 
-const WIDTH: &str = "0.008";
-const HEIGHT: &str = "0.0045";
-const CENTER_X: &str = "-0.747";
-const CENTER_Y: &str = ".1";
+const WIDTH: &str = "4E-5";
+const HEIGHT: &str = "2.25E-5";
+const CENTER_X: &str = "-0.235125";
+const CENTER_Y: &str = "0.827215";
 const X_RES: u32 = 1920;
 const Y_RES: u32 = 1080;
 

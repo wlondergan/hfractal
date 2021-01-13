@@ -1,22 +1,20 @@
-#![feature(associated_type_bounds)]
-
-use image::{RgbImage, Rgb, ImageFormat, ImageResult, ImageBuffer, Pixel};
+use image::{RgbImage, Rgb, ImageFormat, ImageResult};
 use rug::{Complex, Float};
-use std::f64;
 use std::cmp;
 use super::math:: {
     window::WindowProperties,
     number::get_prec,
+    color,
     escape_iters,
-    ESCAPE_ITERS
 };
 use rayon::prelude::*;
 use std::sync::{
     mpsc::channel,
-    Arc};
-
-const LOG_1000: f64 = 6.907_755_278_982_137; // maximum precision f64 of the log of 1000
-const ESCAPE_FACTOR: f64 = LOG_1000 / 255.0;
+    Arc,
+    Mutex};
+use std::thread;
+use indicatif::ProgressBar;
+use std::time::Duration;
 
 /// Creates a png representation of the given window properties and fractal type at the given path.
 pub fn draw_image(path: &str, properties: WindowProperties, _fractal: FractalType) -> ImageResult<()> {
@@ -34,8 +32,7 @@ pub fn draw_image(path: &str, properties: WindowProperties, _fractal: FractalTyp
             let value = Complex::with_val(value_prec, 
                 (properties.start_point.real() + &x_gap * Float::with_val(prec.0, x), 
                 properties.start_point.imag() + &y_gap * Float::with_val(prec.1, y)));
-            let escape = escape_iters(&value);
-            let escape_color = f64::ceil((LOG_1000 - f64::ln(escape as f64)) / ESCAPE_FACTOR) as u8;
+            let escape_color = color(escape_iters(&value));
             image.put_pixel(x, y, Rgb([escape_color, escape_color, escape_color]));
         }
     }
@@ -47,18 +44,49 @@ pub fn draw_image_parallel(path: &str, properties: WindowProperties, _fractal: F
     let x_gap = Float::with_val(prec.0, properties.width_height.real() / properties.x_res);
     let y_gap = Float::with_val(prec.1, properties.width_height.imag() / properties.y_res);
     let value_prec = cmp::max(53, get_prec(&properties));
+    println!("Render corner at {} with image dimension {}", properties.start_point, properties.width_height);
+    println!("Render resolution @{}x{}", properties.x_res, properties.y_res);
     println!("Using mantissa precision {}", value_prec);
 
     let (sender, receiver) = channel();
 
-    (0..properties.x_res * properties.y_res).into_par_iter().for_each_with(sender, |s, x| {
-        let (x, y) = get_position(x, properties.x_res, properties.y_res);
+    let count: Arc<Mutex<u32>> = Arc::new(Mutex::new(0));
+
+    let w_count = Arc::clone(&count);
+    let columns = properties.x_res;
+    thread::spawn(move || {
+        println!("Calculating pixels");
+        let bar = ProgressBar::new(columns as u64);
+        loop {
+            if let Ok(ref mut mutex) = w_count.try_lock() {
+                if **mutex == columns {
+                    bar.finish_and_clear();
+                    break
+                } else {
+                    bar.set_position(**mutex as u64);
+                }
+            }
+            thread::sleep(Duration::from_millis(100));
+        }
+    });
+
+    (0..properties.x_res).map(|w| (0..properties.y_res).map(move |h| (w, h))).flatten().collect::<Vec<_>>().into_par_iter()
+        .for_each_with((sender, Arc::clone(&count)), |s, x| {
+        let (x, y) = x;
         let value = Complex::with_val(value_prec, 
             (properties.start_point.real() + &x_gap * Float::with_val(prec.0, x), 
             properties.start_point.imag() + &y_gap * Float::with_val(prec.1, y)));
-        let escape = escape_iters(&value);
-        let escape_color = f64::ceil((LOG_1000 - f64::ln(escape as f64)) / ESCAPE_FACTOR) as u8;
-        s.send((x, y, Rgb([escape_color, escape_color, escape_color]))).unwrap();
+        let escape_color = color(escape_iters(&value));
+        s.0.send((x, y, Rgb([escape_color, escape_color, escape_color]))).unwrap();
+        if y == 0 {
+            loop {
+                if let Ok(ref mut mutex) = count.try_lock() {
+                    **mutex += 1;
+                    break
+                }
+                thread::sleep(Duration::from_millis(100));
+            }
+        }
     });
 
     println!("Finished calculating points");
@@ -69,11 +97,6 @@ pub fn draw_image_parallel(path: &str, properties: WindowProperties, _fractal: F
     }
     
     image.save_with_format(path, ImageFormat::Png)
-}
-
-#[inline]
-fn get_position(z: u32, _width: u32, height: u32) -> (u32, u32) {
-    (z / height, z % height)
 }
 
 /// Represents all of the different fractal types that this library can image-ify.
