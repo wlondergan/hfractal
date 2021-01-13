@@ -15,5 +15,5 @@ My current biggest to-do is to parallelize computation: currently it takes my co
 After that, I plan to look into error correction algorithms that will allow me to reduce the number of multiple precision computations that occur, which should
 dramatically increase performance.
 
-#Some renders
+# Some renders
 ![](https://github.com/wlondergan/hfractal/blob/master/sample-render.png)
