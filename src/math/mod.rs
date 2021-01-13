@@ -1,13 +1,11 @@
 pub mod number;
 pub mod window;
-use std::cmp;
+pub mod color;
+
 use rug::Complex;
-use window::WindowProperties;
 
 pub const ESCAPE_ITERS: usize = 1000;
-const ESCAPE_SIZE: usize = 1000;
-const LOG_ESCAPE: f64 = 6.907_755_278_982_137; // maximum precision f64 of the log of 1000; adjust when changing log_escape
-const ESCAPE_FACTOR: f64 = LOG_ESCAPE / 255.0;
+const ESCAPE_SIZE: usize = 100;
 
 /// Provides a count of how many function iterations it takes for the given value to escape.
 /// Returns ESCAPE_ITERS if the value doesn't escape in that many iterations.
@@ -24,9 +22,4 @@ pub fn escape_iters(val: &Complex) -> usize {
         z = z + val;
     }
     return ESCAPE_ITERS;
-}
-
-#[inline]
-pub fn color(iters: usize) -> u8 {
-    f64::ceil((LOG_ESCAPE - f64::ln(iters as f64)) / ESCAPE_FACTOR) as u8
 }

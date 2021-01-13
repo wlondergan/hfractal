@@ -1,4 +1,3 @@
-use rug::Complex;
 use rug::Float;
 use super::window::WindowProperties;
 

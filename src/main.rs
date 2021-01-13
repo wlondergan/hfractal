@@ -1,5 +1,5 @@
 use hmand::math::window::WindowProperties;
-use hmand::image::{FractalType, draw_image, draw_image_parallel};
+use hmand::image::{FractalType, draw_image_histogram};
 use rug::{Complex, Float};
 
 const WIDTH: &str = "4E-5";
@@ -34,6 +34,6 @@ fn main() {
         start_point: Complex::with_val((width.prec(), height.prec()), (center_x - (width / 2), center_y - (height / 2))),
     };
     //draw_image("render.png", window, FractalType::Mandelbrot);
-    draw_image_parallel("render.png", window, FractalType::Mandelbrot);
+    draw_image_histogram("render.png", window, FractalType::Mandelbrot).unwrap();
 }
 
