@@ -5,7 +5,7 @@ pub mod color;
 use rug::Complex;
 
 pub const ESCAPE_ITERS: usize = 1000;
-const ESCAPE_SIZE: usize = 100;
+const ESCAPE_SIZE: usize = 1000;
 
 /// Provides a count of how many function iterations it takes for the given value to escape.
 /// Returns ESCAPE_ITERS if the value doesn't escape in that many iterations.

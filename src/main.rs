@@ -2,12 +2,12 @@ use hmand::math::window::WindowProperties;
 use hmand::image::{FractalType, draw_image_histogram};
 use rug::{Complex, Float};
 
-const WIDTH: &str = "4E-5";
-const HEIGHT: &str = "2.25E-5";
-const CENTER_X: &str = "-0.235125";
-const CENTER_Y: &str = "0.827215";
-const X_RES: u32 = 1920;
-const Y_RES: u32 = 1080;
+const WIDTH: &str = "4";
+const HEIGHT: &str = "4";
+const CENTER_X: &str = "-0.5";
+const CENTER_Y: &str = "0";
+const X_RES: u32 = 1000;
+const Y_RES: u32 = 1000;
 
 fn main() {
     let width = match Float::parse(WIDTH) {
