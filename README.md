@@ -5,7 +5,7 @@ Julia sets and more in the future.
 ![](https://github.com/wlondergan/hfractal/blob/master/samples/sample-render3.png)
 
 ## Progress
-Currently, this program only renders the Mandelbrot set in greyscale without any sophisticated math to reduce oversampling requirements. I have plans
+Currently, this program only renders the Mandelbrot set in a naive way without any sophisticated math to reduce oversampling requirements. I have plans
 to add some analytical methods to the rendering process (i.e. using derivatives and such) to reduce oversampling and allow for more efficient computation
 of points. At some point in the future I plan on adding rendering support for Julia sets. The next step after that will be to try to render zooms of the
 Mandelbrot set, although this requires more reading on my part.
@@ -16,6 +16,6 @@ After that, I plan to look into error correction algorithms that will allow me t
 dramatically increase performance.
 
 # Some renders
-## Done using naive coloring scheme
+## Done using naive greyscale coloring scheme
 ![](https://github.com/wlondergan/hfractal/blob/master/samples/sample-render.png)
 ![](https://github.com/wlondergan/hfractal/blob/master/samples/sample-render2.png)
