@@ -3,6 +3,7 @@ This is a pet project of mine created for the purpose of rendering fractals. Cur
 Julia sets and more in the future.
 
 ![The Mandelbrot set, centered at (-.75, .1) with width and height 0.1](https://github.com/wlondergan/hfractal/blob/master/sample-render.png)
+![](https://github.com/wlondergan/hfractal/blob/master/sample-render2.png)
 
 ## Progress
 Currently, this program only renders the Mandelbrot set in greyscale without any sophisticated math to reduce oversampling requirements. I have plans
