@@ -8,6 +8,7 @@ const CENTER_X: &str = "-0.235125";
 const CENTER_Y: &str = "0.827215";
 const X_RES: u32 = 1000;
 const Y_RES: u32 = 1000;
+const OVERSAMPLE_RATE: u32 = 6; // The amount of extra samples that are taken to increase precision.
 
 fn main() {
     let width = match Float::parse(WIDTH) {
