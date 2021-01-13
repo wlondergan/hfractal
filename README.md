@@ -16,6 +16,6 @@ After that, I plan to look into error correction algorithms that will allow me t
 dramatically increase performance.
 
 # Some renders
-## Done using naive coloring scheme
+## Done using naive greyscale coloring scheme
 ![](https://github.com/wlondergan/hfractal/blob/master/samples/sample-render.png)
 ![](https://github.com/wlondergan/hfractal/blob/master/samples/sample-render2.png)
