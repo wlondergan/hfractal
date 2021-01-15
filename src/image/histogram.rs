@@ -1,29 +1,33 @@
-use super::super::math:: {
-    window::WindowProperties,
-    number::get_prec,
-    color::color_hist,
-    escape_iters,
+use super::super::math::{
+    color::color_hist, escape_iters, number::get_prec, window::WindowProperties,
 };
-use rayon::prelude::*;
-use std::sync::{
-    mpsc::channel,
-    Arc,
-    Mutex};
-use std::thread;
+use super::FractalType;
+use image::{ImageFormat, ImageResult, RgbImage};
 use indicatif::ProgressBar;
-use std::time::Duration;
-use image::{RgbImage, Rgb, ImageFormat, ImageResult};
+use rayon::prelude::*;
 use rug::{Complex, Float};
 use std::cmp;
-use super::FractalType;
+use std::sync::{mpsc::channel, Arc, Mutex};
+use std::thread;
+use std::time::Duration;
 
-pub fn draw_image_histogram(path: &str, properties: WindowProperties, _fractal: FractalType) -> ImageResult<()> {
+pub fn draw_image_histogram(
+    path: &str,
+    properties: WindowProperties,
+    _fractal: FractalType,
+) -> ImageResult<()> {
     let prec = properties.start_point.prec();
     let x_gap = Float::with_val(prec.0, properties.width_height.real() / properties.x_res);
     let y_gap = Float::with_val(prec.1, properties.width_height.imag() / properties.y_res);
     let value_prec = cmp::max(53, get_prec(&properties));
-    println!("Render corner at {} with image dimension {}", properties.start_point, properties.width_height);
-    println!("Render resolution @{}x{}", properties.x_res, properties.y_res);
+    println!(
+        "Render corner at {} with image dimension {}",
+        properties.start_point, properties.width_height
+    );
+    println!(
+        "Render resolution @{}x{}",
+        properties.x_res, properties.y_res
+    );
     println!("Using mantissa precision {}", value_prec);
 
     let (sender, receiver) = channel();
@@ -39,7 +43,7 @@ pub fn draw_image_histogram(path: &str, properties: WindowProperties, _fractal: 
             if let Ok(ref mut mutex) = w_count.try_lock() {
                 if **mutex == columns {
                     bar.finish_and_clear();
-                    break
+                    break;
                 } else {
                     bar.set_position(**mutex as u64);
                 }
@@ -48,23 +52,31 @@ pub fn draw_image_histogram(path: &str, properties: WindowProperties, _fractal: 
         }
     });
 
-    (0..properties.x_res).map(|w| (0..properties.y_res).map(move |h| (w, h))).flatten().collect::<Vec<_>>().into_par_iter()
+    (0..properties.x_res)
+        .map(|w| (0..properties.y_res).map(move |h| (w, h)))
+        .flatten()
+        .collect::<Vec<_>>()
+        .into_par_iter()
         .for_each_with((sender, Arc::clone(&count)), |s, x| {
-        let (x, y) = x;
-        let value = Complex::with_val(value_prec, 
-            (properties.start_point.real() + &x_gap * Float::with_val(prec.0, x), 
-            properties.start_point.imag() + &y_gap * Float::with_val(prec.1, y)));
-        s.0.send((x, y, escape_iters(&value))).unwrap();
-        if y == 0 {
-            loop {
-                if let Ok(ref mut mutex) = count.try_lock() {
-                    **mutex += 1;
-                    break
+            let (x, y) = x;
+            let value = Complex::with_val(
+                value_prec,
+                (
+                    properties.start_point.real() + &x_gap * Float::with_val(prec.0, x),
+                    properties.start_point.imag() + &y_gap * Float::with_val(prec.1, y),
+                ),
+            );
+            s.0.send((x, y, escape_iters(&value))).unwrap();
+            if y == 0 {
+                loop {
+                    if let Ok(ref mut mutex) = count.try_lock() {
+                        **mutex += 1;
+                        break;
+                    }
+                    thread::sleep(Duration::from_millis(100));
                 }
-                thread::sleep(Duration::from_millis(100));
             }
-        }
-    });
+        });
 
     println!("Finished calculating points");
     let mut image = RgbImage::new(properties.x_res, properties.y_res);
@@ -72,6 +84,6 @@ pub fn draw_image_histogram(path: &str, properties: WindowProperties, _fractal: 
     for (x, y, color) in colors.iter() {
         image.put_pixel(*x, *y, *color);
     }
-    
+
     image.save_with_format(path, ImageFormat::Png)
 }
