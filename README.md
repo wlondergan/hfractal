@@ -2,7 +2,7 @@
 This is a pet project of mine created for the purpose of rendering fractals. Currently only the Mandelbrot set is supported, but I have plans to add
 Julia sets and more in the future. Currently this project only works on beta Rust.
 
-![](https://github.com/wlondergan/hfractal/blob/master/samples/sample-render3.png)
+![](https://github.com/wlondergan/hfractal/blob/master/samples/sample-render4.png)
 
 ## Progress
 Currently, this program only renders the Mandelbrot set in a naive way without any sophisticated math to reduce oversampling requirements. I have plans
