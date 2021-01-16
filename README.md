@@ -1,6 +1,6 @@
 # hfractal
 This is a pet project of mine created for the purpose of rendering fractals. Currently only the Mandelbrot set is supported, but I have plans to add
-Julia sets and more in the future. Currently this project only works on beta Rust.
+Julia sets and more in the future.
 
 ![](https://github.com/wlondergan/hfractal/blob/master/samples/sample-render4.png)
 
